@@ -2,6 +2,7 @@ import gigModel from "../models/gig.model.js";
 import { createError } from "../utils/error.handler.js";
 
 export const createGig = async (req, res, next) => {
+  console.log(req.body)
   if(!req.isSeller) return next(createError(403, 'seller verification failed!'));
   const newGig = new gigModel({userId: req.userId, ...req.body});
   try {
@@ -40,7 +41,7 @@ export const getGigs = async (req, res, next) => {
     ...(q.search && {title: {$regex: q.search, $options: 'i'}})
   }
   try {
-    const gigs = await gigModel.find(filters).sort({[q.sort]: -1})
+    const gigs = await gigModel.find(filters || {}).sort({[q.sort]: -1})
     res.status(201).json(gigs)
   } catch (error) {
     next(error)
